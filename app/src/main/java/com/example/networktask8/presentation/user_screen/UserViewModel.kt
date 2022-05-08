@@ -4,19 +4,17 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.networktask8.data.data_source.RetrofitInstance
-import com.example.networktask8.data.repository.ContentRepositoryImpl
-import com.example.networktask8.domain.repository.ContentRepository
+import com.example.networktask8.domain.use_case.GetRandomUserUseCase
+import com.example.networktask8.domain.use_case.GetResourcesUseCase
+import com.example.networktask8.domain.use_case.GetUsersUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class UserViewModel : ViewModel() {
-    private val contentRepository: ContentRepository by lazy {
-        ContentRepositoryImpl(
-            RetrofitInstance.userService
-        )
-    }
-
+class UserViewModel(
+    private val getUsersUseCase: GetUsersUseCase,
+    private val getRandomUser: GetRandomUserUseCase,
+    private val getResourcesUseCase: GetResourcesUseCase
+) : ViewModel() {
     init {
         viewModelScope.launch(Dispatchers.IO) {
             getContentEvent(ContentSortState.AllUser)
@@ -45,7 +43,7 @@ class UserViewModel : ViewModel() {
 
     private fun getResources() = viewModelScope.launch {
         _screenState.value = UserScreenState(isLoading = true)
-        val result = contentRepository.getResourceList()
+        val result = getResourcesUseCase.execute()
         result?.let {
             _screenState.value = UserScreenState(
                 resourcesFetched = it,
@@ -56,7 +54,7 @@ class UserViewModel : ViewModel() {
 
     private fun getRandomUser() = viewModelScope.launch {
         _screenState.value = UserScreenState(isLoading = true)
-        val result = contentRepository.getRandomUser()
+        val result = getRandomUser.execute()
         result?.let {
             _screenState.value = UserScreenState(
                 singleUserFetched = it,
@@ -67,7 +65,7 @@ class UserViewModel : ViewModel() {
 
     private fun getUserList() = viewModelScope.launch {
         _screenState.value = UserScreenState(isLoading = true)
-        val result = contentRepository.getUserList()
+        val result = getUsersUseCase.execute()
         result?.let {
             _screenState.value =
                 UserScreenState(userDataFetched = it, contentSortState = ContentSortState.AllUser)

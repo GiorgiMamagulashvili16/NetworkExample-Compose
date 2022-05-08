@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -16,16 +15,17 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.example.networktask8.domain.model.Resource
 import com.example.networktask8.domain.model.User
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun UserScreen() {
-    val vm: UserViewModel = remember {
-        UserViewModel()
-    }
+    val vm: UserViewModel = getViewModel()
+
     val screenState = vm.screenState.value
     val listState = rememberLazyListState()
 
