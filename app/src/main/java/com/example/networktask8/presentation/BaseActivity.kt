@@ -11,7 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.networktask8.presentation.navigation.NavGraph
 import com.example.networktask8.presentation.ui.theme.NetworkTask8Theme
 
-class UserActivity : ComponentActivity() {
+class BaseActivity : ComponentActivity() {
     lateinit var navHostController: NavHostController
 
     override fun onCreate(savedInstanceState: Bundle?) {
