@@ -1,6 +1,8 @@
 package com.example.networktask8.data.repository
 
 import com.example.networktask8.data.data_source.UserService
+import com.example.networktask8.data.data_source.model.dto.CreateUserRequest
+import com.example.networktask8.data.data_source.model.response.CreateUserResponse
 import com.example.networktask8.domain.model.Resource
 import com.example.networktask8.domain.model.User
 import com.example.networktask8.domain.repository.ContentRepository
@@ -31,6 +33,15 @@ class ContentRepositoryImpl(private val userService: UserService) : ContentRepos
         val response = userService.getResources()
         return if (response.isSuccessful) {
             response.body()?.data?.map { it.toResource() }
+        } else {
+            null
+        }
+    }
+
+    override suspend fun createUser(createUserRequest: CreateUserRequest): CreateUserResponse? {
+        val response = userService.createUser(createUserRequest = createUserRequest)
+        return if (response.isSuccessful) {
+            response.body()
         } else {
             null
         }

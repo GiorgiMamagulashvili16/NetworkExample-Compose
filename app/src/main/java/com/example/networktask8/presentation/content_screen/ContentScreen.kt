@@ -1,12 +1,15 @@
-package com.example.networktask8.presentation.user_screen
+package com.example.networktask8.presentation.content_screen
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -15,71 +18,84 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.example.networktask8.domain.model.Resource
 import com.example.networktask8.domain.model.User
+import com.example.networktask8.presentation.navigation.Screens
+import com.example.networktask8.presentation.content_screen.states.ContentSortState
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun UserScreen() {
-    val vm: UserViewModel = getViewModel()
+fun ContentScreen(
+    navController: NavController
+) {
+    val vm: ContentViewModel = getViewModel()
 
     val screenState = vm.screenState.value
     val listState = rememberLazyListState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        ContentSortSection(
-            onButtonClickAction = {
-                vm.getContentEvent(it)
-            }, sortState = screenState.contentSortState, modifier = Modifier
-                .fillMaxWidth()
-                .padding(18.dp)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+    Scaffold(modifier = Modifier.fillMaxSize(), floatingActionButton = {
+        FloatingActionButton(
+            onClick = { navController.navigate(route = Screens.CreateUser.route) },
+            backgroundColor = MaterialTheme.colors.primary
+        ) {
+            Icon(imageVector = Icons.Default.Add, contentDescription = null)
+        }
+    }) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            ContentSortSection(
+                onButtonClickAction = {
+                    vm.getContentEvent(it)
+                }, sortState = screenState.contentSortState, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(18.dp)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
 
-        when {
-            screenState.userDataFetched != null -> {
-                LazyColumn(modifier = Modifier.fillMaxSize(), state = listState) {
-                    items(items = screenState.userDataFetched) { user ->
-                        UserItem(user = user)
+            when {
+                screenState.userDataFetched != null -> {
+                    LazyColumn(modifier = Modifier.fillMaxSize(), state = listState) {
+                        items(items = screenState.userDataFetched) { user ->
+                            UserItem(user = user)
+                        }
                     }
                 }
-            }
-            screenState.singleUserFetched != null -> {
-                RandomUserSection(
-                    user = screenState.singleUserFetched,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(CenterHorizontally)
-                )
-            }
-            screenState.resourcesFetched != null -> {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(items = screenState.resourcesFetched) { resource ->
-                        ResourceItem(
-                            resource = resource,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                        )
+                screenState.singleUserFetched != null -> {
+                    RandomUserSection(
+                        user = screenState.singleUserFetched,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(CenterHorizontally)
+                    )
+                }
+                screenState.resourcesFetched != null -> {
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(items = screenState.resourcesFetched) { resource ->
+                            ResourceItem(
+                                resource = resource,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                            )
+                        }
                     }
                 }
-            }
-            screenState.error != null -> {
-                Text(
-                    text = screenState.error,
-                    style = MaterialTheme.typography.h6,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-            }
-            screenState.isLoading -> {
-                CircularProgressIndicator(modifier = Modifier.align(CenterHorizontally))
+                screenState.error != null -> {
+                    Text(
+                        text = screenState.error,
+                        style = MaterialTheme.typography.h6,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                }
+                screenState.isLoading -> {
+                    CircularProgressIndicator(modifier = Modifier.align(CenterHorizontally))
+                }
             }
         }
     }
@@ -185,53 +201,47 @@ fun ContentSortSection(
         modifier = modifier
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            DefaultRadioButton(
+            MyRadioButton(
                 text = "Users",
                 checked = sortState is ContentSortState.AllUser,
                 onSelected = { onButtonClickAction.invoke(ContentSortState.AllUser) }
             )
             Spacer(modifier = Modifier.width(8.dp))
-            DefaultRadioButton(
+            MyRadioButton(
                 text = "Random",
                 checked = sortState is ContentSortState.RandomUser,
                 onSelected = { onButtonClickAction.invoke(ContentSortState.RandomUser) }
             )
             Spacer(modifier = Modifier.width(8.dp))
-            DefaultRadioButton(
+            MyRadioButton(
                 text = "Resources",
                 checked = sortState is ContentSortState.AllResource,
                 onSelected = { onButtonClickAction.invoke(ContentSortState.AllResource) }
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            DefaultRadioButton(
-                text = "Create User",
-                checked = sortState is ContentSortState.CreateUser,
-                onSelected = { onButtonClickAction.invoke(ContentSortState.CreateUser) }
             )
         }
     }
 }
 
 @Composable
-fun DefaultRadioButton(
+fun MyRadioButton(
     text: String,
     checked: Boolean,
     onSelected: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.clickable {
+            onSelected.invoke()
+        },
         verticalAlignment = Alignment.CenterVertically
     ) {
         RadioButton(
             selected = checked,
-            onClick = { onSelected.invoke() },
             colors = RadioButtonDefaults.colors(
                 selectedColor = MaterialTheme.colors.primary,
                 unselectedColor = MaterialTheme.colors.onBackground
-            )
+            ),
+            onClick = {}
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = text, style = MaterialTheme.typography.body1)

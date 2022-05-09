@@ -1,13 +1,13 @@
 package com.example.networktask8.data.data_source
 
-import com.example.networktask8.data.data_source.dto.ResourceDto
-import com.example.networktask8.data.data_source.dto.SingleUserResponse
-import com.example.networktask8.data.data_source.dto.UserDto
-import com.example.networktask8.data.data_source.dto.UserResponse
+import com.example.networktask8.data.data_source.model.dto.CreateUserRequest
+import com.example.networktask8.data.data_source.model.dto.ResourceDto
+import com.example.networktask8.data.data_source.model.dto.UserDto
+import com.example.networktask8.data.data_source.model.response.CreateUserResponse
+import com.example.networktask8.data.data_source.model.response.SingleUserResponse
+import com.example.networktask8.data.data_source.model.response.UserResponse
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface UserService {
 
@@ -24,4 +24,9 @@ interface UserService {
 
     @GET("/api/unknown")
     suspend fun getResources(): Response<UserResponse<ResourceDto>>
+
+    @POST("/api/users")
+    suspend fun createUser(
+        @Body createUserRequest: CreateUserRequest
+    ): Response<CreateUserResponse>
 }

@@ -1,4 +1,4 @@
-package com.example.networktask8.data.data_source.dto
+package com.example.networktask8.data.data_source.model.dto
 
 import com.example.networktask8.domain.model.Resource
 import com.google.gson.annotations.SerializedName

@@ -4,10 +4,12 @@ import com.example.networktask8.data.data_source.provideRetrofitInstance
 import com.example.networktask8.data.data_source.provideService
 import com.example.networktask8.data.repository.ContentRepositoryImpl
 import com.example.networktask8.domain.repository.ContentRepository
+import com.example.networktask8.domain.use_case.CreateUserUseCase
 import com.example.networktask8.domain.use_case.GetRandomUserUseCase
 import com.example.networktask8.domain.use_case.GetResourcesUseCase
 import com.example.networktask8.domain.use_case.GetUsersUseCase
-import com.example.networktask8.presentation.user_screen.UserViewModel
+import com.example.networktask8.presentation.content_screen.ContentViewModel
+import com.example.networktask8.presentation.create_user_screen.CreateUserViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -24,9 +26,13 @@ val useCaseModule = module {
     single { GetRandomUserUseCase(get()) }
     single { GetResourcesUseCase(get()) }
     single { GetUsersUseCase(get()) }
+    single { CreateUserUseCase(get()) }
 }
 val vmModule = module {
     viewModel {
-        UserViewModel(get(), get(), get())
+        ContentViewModel(get(), get(), get())
+    }
+    viewModel {
+        CreateUserViewModel(get())
     }
 }

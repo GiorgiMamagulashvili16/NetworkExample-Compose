@@ -1,4 +1,4 @@
-package com.example.networktask8.presentation.user_screen
+package com.example.networktask8.presentation.content_screen
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -7,13 +7,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.networktask8.domain.use_case.GetRandomUserUseCase
 import com.example.networktask8.domain.use_case.GetResourcesUseCase
 import com.example.networktask8.domain.use_case.GetUsersUseCase
+import com.example.networktask8.presentation.content_screen.states.ContentSortState
+import com.example.networktask8.presentation.content_screen.states.UserScreenState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class UserViewModel(
+class ContentViewModel(
     private val getUsersUseCase: GetUsersUseCase,
     private val getRandomUser: GetRandomUserUseCase,
-    private val getResourcesUseCase: GetResourcesUseCase
+    private val getResourcesUseCase: GetResourcesUseCase,
 ) : ViewModel() {
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -23,6 +25,7 @@ class UserViewModel(
 
     private val _screenState = mutableStateOf(UserScreenState())
     val screenState: State<UserScreenState> = _screenState
+
 
     fun getContentEvent(event: ContentSortState) {
         when (event) {
@@ -35,11 +38,10 @@ class UserViewModel(
             is ContentSortState.RandomUser -> {
                 getRandomUser()
             }
-            is ContentSortState.CreateUser -> {
-
-            }
         }
     }
+
+
 
     private fun getResources() = viewModelScope.launch {
         _screenState.value = UserScreenState(isLoading = true)
